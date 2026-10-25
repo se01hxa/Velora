@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="left" x1="115" y1="84" x2="278" y2="400" gradientUnits="userSpaceOnUse"><stop stop-color="#F4F5F7"/><stop offset=".43" stop-color="#C1C5CD"/><stop offset="1" stop-color="#727984"/></linearGradient>
+    <linearGradient id="right" x1="368" y1="85" x2="235" y2="442" gradientUnits="userSpaceOnUse"><stop stop-color="#ECEEF2"/><stop offset=".42" stop-color="#F8F9FB"/><stop offset=".76" stop-color="#C7CCD4"/><stop offset="1" stop-color="#9098A4"/></linearGradient>
+    <linearGradient id="fold" x1="231" y1="358" x2="275" y2="407" gradientUnits="userSpaceOnUse"><stop stop-color="#4A515D"/><stop offset="1" stop-color="#B3BBC7" stop-opacity="0"/></linearGradient>
+  </defs>
+  <path d="M108 112C102 99 111 86 125 86H184C195 86 203 92 208 102L287 280L244 390L108 112Z" fill="url(#left)"/>
+  <path d="M331 101C335 91 345 85 356 85H410C424 85 433 100 427 113L289 423C281 442 255 443 246 424L211 348C231 369 254 355 265 331L331 101Z" fill="url(#right)"/>
+  <path d="M211 348C231 369 254 355 265 331L246 424L211 348Z" fill="url(#fold)" opacity=".63"/>
+  <path d="M126 90H183C192 90 201 96 204 104L262 234M356 90H409" stroke="#FFF" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
+</svg>

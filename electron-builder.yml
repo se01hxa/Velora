@@ -1,0 +1,40 @@
+appId: studio.luma.desktop
+productName: Velora
+copyright: Copyright © 2026 Velora
+executableName: Velora
+asar: true
+forceCodeSigning: false
+directories:
+  output: ../release
+  buildResources: build
+files:
+  - dist/**
+  - electron/**
+  - mcp/**
+  - build/icon.ico
+  - build/icon.png
+  - package.json
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: Velora-Setup-${version}.exe
+  signAndEditExecutable: true
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Velora
+  uninstallDisplayName: Velora
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  language: '1042'
+  displayLanguageSelector: false

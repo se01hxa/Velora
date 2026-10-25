@@ -1,0 +1,12 @@
+node_modules/
+dist/
+release/
+*.log
+.env
+.env.*
+!.env.example
+mcp-bridge.json
+*.luma.json
+*.velora.json
+.DS_Store
+Thumbs.db
