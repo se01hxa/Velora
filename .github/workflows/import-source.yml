@@ -15,12 +15,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo '0c79b9e0463bde31ba9235900cdcd47f0fa522c769f52ebaa5248e483354c91f  Velora-source.zip' | sha256sum -c -
+          echo '6eedcffba112b06dab3eeecd5b1c29b2d7a903a198365cde28775c1e280b2d4b  Velora-source.zip' | sha256sum -c -
           unzip -q Velora-source.zip -d "$RUNNER_TEMP/velora-source"
           cp -a "$RUNNER_TEMP/velora-source/Velora/." .
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add src electron mcp docs build assets .gitignore .gitattributes package.json package-lock.json tsconfig.json vite.config.ts index.html electron-builder.yml README.md README.ko.md THIRD-PARTY-NOTICES.txt build-windows.cmd
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'Publish Velora 0.4.0 source, original logo and screenshots'
+          git commit -m 'Add custom artboard sizes and twelve new editable design examples'
           git push origin HEAD:main
