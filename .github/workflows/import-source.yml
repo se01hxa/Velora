@@ -1,0 +1,26 @@
+name: Publish Velora source tree
+on:
+  push:
+    paths:
+      - '.github/workflows/import-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Verify and publish the reviewed source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '0c79b9e0463bde31ba9235900cdcd47f0fa522c769f52ebaa5248e483354c91f  Velora-source.zip' | sha256sum -c -
+          unzip -q Velora-source.zip -d "$RUNNER_TEMP/velora-source"
+          cp -a "$RUNNER_TEMP/velora-source/Velora/." .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src electron mcp docs build assets .gitignore .gitattributes package.json package-lock.json tsconfig.json vite.config.ts index.html electron-builder.yml README.md README.ko.md THIRD-PARTY-NOTICES.txt build-windows.cmd
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Publish Velora 0.4.0 source, original logo and screenshots'
+          git push origin HEAD:main
