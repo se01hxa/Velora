@@ -1,4 +1,5 @@
 import type { DesignNode, DesignPage, DesignProject, NodeKeyframe } from './types';
+import {validateFonts} from './fonts';
 
 type RecordValue = Record<string, unknown>;
 const record = (value: unknown): value is RecordValue => !!value && typeof value === 'object' && !Array.isArray(value);
@@ -76,8 +77,12 @@ function parseNode(raw: RecordValue, id: string, bounds: Bounds): DesignNode {
     animation: choice(raw.animation, ['none', 'float', 'pulse', 'fade', 'slide'], 'none'),
     duration: finite(raw.duration, .1, 120, 2), image: imageData(raw.image),
   };
-  if (has(raw, 'fillType')) node.fillType = choice(raw.fillType, ['solid', 'linear'], 'solid');
-  if (record(raw.gradient)) node.gradient = { from: color(raw.gradient.from, node.fill), to: color(raw.gradient.to, '#ffffff'), angle: finite(raw.gradient.angle, -360, 360, 135) };
+  if (has(raw, 'fillType')) node.fillType = choice(raw.fillType, ['solid', 'linear', 'radial'], 'solid');
+  if (record(raw.gradient)) {node.gradient = { from: color(raw.gradient.from, node.fill), to: color(raw.gradient.to, '#ffffff'), angle: finite(raw.gradient.angle, -360, 360, 135) };if(Array.isArray(raw.gradient.stops)){if(raw.gradient.stops.length<2||raw.gradient.stops.length>8)throw Error('그라디언트는 2~8개 색상을 지원합니다.');node.gradient.stops=raw.gradient.stops.map(stop=>{if(!record(stop))throw Error('그라디언트 색상 정보를 확인하세요.');return{color:color(stop.color,'#ffffff'),position:finite(stop.position,0,1,0)};}).sort((a,b)=>a.position-b.position);}}
+  if(Array.isArray(raw.strokeDash))node.strokeDash=raw.strokeDash.slice(0,8).map(v=>finite(v,.1,1000,4));
+  if(has(raw,'strokeCap'))node.strokeCap=choice(raw.strokeCap,['butt','round','square'],'butt');
+  if(has(raw,'fontStyle'))node.fontStyle=choice(raw.fontStyle,['normal','italic'],'normal');
+  if(has(raw,'textDecoration'))node.textDecoration=choice(raw.textDecoration,['none','underline','line-through'],'none');
   if (has(raw, 'stroke')) node.stroke = color(raw.stroke, 'transparent');
   if (has(raw, 'strokeWidth')) node.strokeWidth = finite(raw.strokeWidth, 0, bounds.stroke, 0);
   if (has(raw, 'cornerRadii')) {
@@ -110,7 +115,7 @@ function parseNode(raw: RecordValue, id: string, bounds: Bounds): DesignNode {
   if (typeof raw.componentSourceId === 'string') node.componentSourceId = raw.componentSourceId;
   if (has(raw, 'overrides')) {
     if (!Array.isArray(raw.overrides) || raw.overrides.length > 1000) throw new Error('컴포넌트 재정의가 너무 많거나 올바르지 않습니다.');
-    const allowed = new Set(['name', 'text', 'fill', 'color', 'fontSize', 'fontWeight', 'fontFamily', 'lineHeight', 'letterSpacing', 'textAlign', 'verticalAlign', 'x', 'y', 'parentId', 'width', 'height', 'radius', 'cornerRadii', 'opacity', 'rotation', 'blur', 'glass', 'shadow', 'shadowX', 'shadowY', 'shadowBlur', 'shadowColor', 'stroke', 'strokeWidth', 'fillType', 'gradient', 'visible', 'locked', 'image', 'layout', 'sizing', 'constraints', 'clipContent', 'blendMode', 'vectorPath', 'animation', 'duration', 'keyframes', 'easing', 'delay', 'interaction', 'scale']);
+    const allowed = new Set(['name', 'text', 'fill', 'color', 'fontSize', 'fontWeight', 'fontFamily', 'lineHeight', 'letterSpacing', 'textAlign', 'verticalAlign', 'x', 'y', 'parentId', 'width', 'height', 'radius', 'cornerRadii', 'opacity', 'rotation', 'blur', 'glass', 'shadow', 'shadowX', 'shadowY', 'shadowBlur', 'shadowColor', 'stroke', 'strokeWidth', 'strokeDash', 'strokeCap', 'fontStyle', 'textDecoration', 'fillType', 'gradient', 'visible', 'locked', 'image', 'layout', 'sizing', 'constraints', 'clipContent', 'blendMode', 'vectorPath', 'animation', 'duration', 'keyframes', 'easing', 'delay', 'interaction', 'scale']);
     node.overrides = [...new Set(raw.overrides.filter((key): key is string => typeof key === 'string' && (allowed.has(key) || key.startsWith('deleted:') && key.length > 8)))];
   }
   if (has(raw, 'keyframes')) node.keyframes = keyframes(raw.keyframes, bounds);
@@ -236,5 +241,6 @@ export function parseProject(raw: string): DesignProject {
       return { name: str(value.name, 'Color', 100), value: color(value.value, '#000000') };
     }) };
   }
+  if(has(source,'fonts'))project.fonts=validateFonts(source.fonts);
   return project;
 }

@@ -8,8 +8,8 @@ import {projectForPage} from './workspace-store';
 import {exportDesign} from './exporters';
 
 describe('editable starter content and presets',()=>{
-  it('offers 23 unique templates with new editable examples for all five platforms',()=>{
-    expect(templates).toHaveLength(23);expect(new Set(templates.map(t=>t.id)).size).toBe(23);
+  it('offers 24 unique templates with new editable examples for all five platforms',()=>{
+    expect(templates).toHaveLength(24);expect(new Set(templates.map(t=>t.id)).size).toBe(24);
     for(const kind of ['desktop','mobile','web','banner','slide'])expect(extraTemplates.filter(t=>t.kind===kind).length).toBeGreaterThanOrEqual(2);
     for(const t of extraTemplates){const p=t.create(),project=projectForPage(p),restored=parseProject(JSON.stringify(project));expect(restored.pages[0].nodes.length).toBe(p.nodes.length);expect(flattenPage(p).nodes.length).toBeGreaterThan(5);expect(p.nodes.some(n=>n.type==='text')).toBe(true);expect(p.nodes.every(n=>n.type!=='image')).toBe(true);expect(exportDesign(project,p,'svg')[0].content).toContain('<svg');}
   });

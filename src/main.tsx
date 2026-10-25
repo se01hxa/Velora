@@ -4,4 +4,5 @@ import App from './Workspace';
 import './styles.css';
 import './obsidian.css';
 import './size-controls.css';
+import './creative-tools.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);

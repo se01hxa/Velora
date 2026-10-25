@@ -344,7 +344,7 @@ if (MCP_MODE) {
   app.whenReady().then(async () => {
     const devOrigin = developmentUrl ? developmentUrl.origin : '';
     const devSocket = developmentUrl ? developmentUrl.origin.replace(/^http/, 'ws') : '';
-    const policy = `default-src 'self'; script-src 'self'${developmentUrl ? " 'unsafe-eval'" : ''}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'${developmentUrl ? ` ${devOrigin} ${devSocket}` : ''}; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'self' blob: about:`;
+    const policy = `default-src 'self'; script-src 'self'${developmentUrl ? " 'unsafe-eval'" : ''}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; worker-src 'self' blob:; connect-src 'self'${developmentUrl ? ` ${devOrigin} ${devSocket}` : ''}; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'self' blob: about:`;
     session.defaultSession.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
     session.defaultSession.setPermissionCheckHandler(() => false);
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {

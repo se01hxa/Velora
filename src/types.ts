@@ -1,6 +1,9 @@
 export type NodeType = 'frame' | 'text' | 'button' | 'ellipse' | 'image' | 'group' | 'line' | 'polygon' | 'vector';
 export type Motion = 'none' | 'float' | 'pulse' | 'fade' | 'slide';
 export type PageKind = 'mobile' | 'web' | 'slide' | 'desktop' | 'banner';
+export interface GradientStop {color:string;position:number}
+export interface PaintGradient {from:string;to:string;angle:number;stops?:GradientStop[]}
+export interface EmbeddedFont {id:string;family:string;name:string;data:string}
 export interface NodeLayout { direction: 'none' | 'horizontal' | 'vertical'; gap: number; padding: number; align: 'start' | 'center' | 'end'; justify: 'start' | 'center' | 'end' | 'space-between'; }
 export interface NodeSizing { horizontal: 'fixed' | 'fill' | 'hug'; vertical: 'fixed' | 'fill' | 'hug'; }
 export interface NodeConstraints { horizontal: 'left' | 'right' | 'center' | 'stretch'; vertical: 'top' | 'bottom' | 'center' | 'stretch'; }
@@ -14,7 +17,9 @@ export interface DesignNode {
   glass: boolean; shadow: boolean; visible: boolean; locked: boolean;
   animation: Motion; duration: number; image?: string;
   parentId?: string;
-  fillType?: 'solid' | 'linear'; gradient?: { from: string; to: string; angle: number };
+  fillType?: 'solid' | 'linear' | 'radial'; gradient?: PaintGradient;
+  strokeDash?: number[]; strokeCap?: 'butt' | 'round' | 'square';
+  fontStyle?: 'normal' | 'italic'; textDecoration?: 'none' | 'underline' | 'line-through';
   stroke?: string; strokeWidth?: number; cornerRadii?: [number, number, number, number];
   fontFamily?: string; lineHeight?: number; letterSpacing?: number;
   textAlign?: 'left' | 'center' | 'right'; verticalAlign?: 'top' | 'center' | 'bottom';
@@ -38,6 +43,7 @@ export interface DesignProject {
   version: 1 | 2; name: string; activePageId: string; pages: DesignPage[];
   revision?: number; timeline?: { duration: number; fps: number };
   tokens?: { colors: { name: string; value: string }[] };
+  fonts?: EmbeddedFont[];
 }
 export interface ExportFile { name: string; content: string; }
 export type ExportFormat = 'html' | 'react' | 'xml' | 'compose' | 'svg' | 'json' | 'xaml';

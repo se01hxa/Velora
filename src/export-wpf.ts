@@ -1,5 +1,6 @@
 import type {DesignProject,DesignPage,DesignNode,ExportFile} from './types';
 import {flattenPage} from './model';
+import {gradientStops} from './paint';
 const xml=(s:string)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;').replace(/\r?\n/g,'&#10;').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g,'');
 const num=(n:number)=>String(Math.round(n*1000)/1000);
 function color(value:string){if(value==='transparent')return'Transparent';let h=value.replace('#','');if(h.length<=4)h=[...h].map(c=>c+c).join('');return`#${h.length===8?h.slice(6)+h.slice(0,6):h}`;}
@@ -7,8 +8,8 @@ export function wpfExport(project:DesignProject,source:DesignPage):ExportFile[]{
  const page=flattenPage(source),resources:string[]=[],animations:string[]=[];
  const elements=page.nodes.filter(n=>n.visible).map((n,i)=>{
   const name=`Layer_${i+1}`,brush=`Fill_${i+1}`;
-  if(n.fillType==='linear'&&n.gradient){const a=n.gradient.angle*Math.PI/180,dx=Math.sin(a),dy=-Math.cos(a);resources.push(`<LinearGradientBrush x:Key="${brush}" StartPoint="${num(.5-dx/2)},${num(.5-dy/2)}" EndPoint="${num(.5+dx/2)},${num(.5+dy/2)}"><GradientStop Color="${color(n.gradient.from)}" Offset="0"/><GradientStop Color="${color(n.gradient.to)}" Offset="1"/></LinearGradientBrush>`);}
-  const fill=n.fillType==='linear'&&n.gradient?`{StaticResource ${brush}}`:color(n.fill),stroke=color(n.stroke||'transparent');
+  if(n.fillType!=='solid'&&n.gradient){const a=n.gradient.angle*Math.PI/180,dx=Math.sin(a),dy=-Math.cos(a),stops=gradientStops(n.gradient).map(s=>`<GradientStop Color="${color(s.color)}" Offset="${num(s.position)}"/>`).join('');resources.push(n.fillType==='radial'?`<RadialGradientBrush x:Key="${brush}" Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.7071" RadiusY="0.7071">${stops}</RadialGradientBrush>`:`<LinearGradientBrush x:Key="${brush}" StartPoint="${num(.5-dx/2)},${num(.5-dy/2)}" EndPoint="${num(.5+dx/2)},${num(.5+dy/2)}">${stops}</LinearGradientBrush>`);}
+  const fill=n.fillType!=='solid'&&n.gradient?`{StaticResource ${brush}}`:color(n.fill),stroke=color(n.stroke||'transparent');
   const attrs=`x:Name="${name}" Canvas.Left="${num(n.x)}" Canvas.Top="${num(n.y)}" Width="${num(n.width)}" Height="${num(n.height)}" Opacity="${num(n.opacity)}" RenderTransformOrigin="0.5,0.5" ToolTip="${xml(n.name)}"`;
   const transform=(tag:string)=>`<${tag}.RenderTransform><TransformGroup><RotateTransform Angle="${num(n.rotation)}"/><TranslateTransform/><ScaleTransform/></TransformGroup></${tag}.RenderTransform>`;
   const effect=(tag:string)=>n.shadow?`<${tag}.Effect><DropShadowEffect Color="${color(n.shadowColor||'#00000040')}" BlurRadius="${num(n.shadowBlur??28)}" ShadowDepth="${num(Math.hypot(n.shadowX||0,n.shadowY??12))}" Opacity="0.3"/></${tag}.Effect>`:!n.glass&&n.blur?`<${tag}.Effect><BlurEffect Radius="${num(n.blur)}"/></${tag}.Effect>`:'';

@@ -1,4 +1,5 @@
 import {validArtboardSize} from './artboard-size';
+import {normalizeGradient} from './paint';
 import type { DesignNode, DesignPage, DesignProject, DesignOperation, NodeType, NodeKeyframe } from './types';
 
 const TYPES: NodeType[] = ['frame', 'text', 'button', 'ellipse', 'image', 'group', 'line', 'polygon', 'vector'];
@@ -20,7 +21,7 @@ export function normalizeNode(type: NodeType, overrides: Partial<DesignNode> = {
     fontSize: number(n.fontSize, 18, 1, 1024), fontWeight: number(n.fontWeight, 500, 100, 900), radius: number(n.radius, type === 'ellipse' ? 999 : type === 'text' || type === 'line' ? 0 : 24, 0, 8192),
     opacity: number(n.opacity, 1, 0, 1), rotation: number(n.rotation, 0, -360, 360), blur: number(n.blur, 0, 0, 100), glass: n.glass === true, shadow: n.shadow === true, visible: n.visible !== false, locked: n.locked === true,
     animation: choice(n.animation, ['none', 'float', 'pulse', 'fade', 'slide'], 'none'), duration: number(n.duration, 2, .1, 120),
-    fillType: choice(n.fillType, ['solid', 'linear'], 'solid'), stroke: color(n.stroke, type === 'line' ? '#172424' : 'transparent'), strokeWidth: number(n.strokeWidth, type === 'line' ? 2 : 0, 0, 200),
+    fillType: choice(n.fillType, ['solid', 'linear', 'radial'], 'solid'), stroke: color(n.stroke, type === 'line' ? '#172424' : 'transparent'), strokeWidth: number(n.strokeWidth, type === 'line' ? 2 : 0, 0, 200),
     fontFamily: text(n.fontFamily, 'Segoe UI', 160), lineHeight: number(n.lineHeight, 1.2, .5, 5), letterSpacing: number(n.letterSpacing, 0, -20, 100),
     textAlign: choice(n.textAlign, ['left', 'center', 'right'], type === 'button' ? 'center' : 'left'), verticalAlign: choice(n.verticalAlign, ['top', 'center', 'bottom'], type === 'button' ? 'center' : 'top'),
     shadowX: number(n.shadowX, 0, -2048, 2048), shadowY: number(n.shadowY, 12, -2048, 2048), shadowBlur: number(n.shadowBlur, 30, 0, 300), shadowColor: color(n.shadowColor, '#00000020'),
@@ -32,7 +33,10 @@ export function normalizeNode(type: NodeType, overrides: Partial<DesignNode> = {
   };
   if (typeof n.parentId === 'string' && n.parentId) result.parentId = n.parentId.slice(0, 100);
   if (typeof n.image === 'string' && n.image.length < 14_000_000 && /^data:image\/(?:png|jpeg|webp);base64,[a-z\d+/]+={0,2}$/i.test(n.image)) result.image = n.image;
-  if (n.gradient) result.gradient = { from: color(n.gradient.from, '#d8f5d0'), to: color(n.gradient.to, '#a3c8ef'), angle: number(n.gradient.angle, 90, -360, 360) };
+  if (n.gradient) result.gradient = normalizeGradient(n.gradient);
+  if(n.strokeDash)result.strokeDash=n.strokeDash.slice(0,8).map(v=>number(v,4,.1,1000));
+  result.strokeCap=choice(n.strokeCap,['butt','round','square'],'butt');
+  result.fontStyle=choice(n.fontStyle,['normal','italic'],'normal');result.textDecoration=choice(n.textDecoration,['none','underline','line-through'],'none');
   if (Array.isArray(n.cornerRadii) && n.cornerRadii.length === 4) result.cornerRadii = n.cornerRadii.map(v => number(v, result.radius, 0, 8192)) as [number, number, number, number];
   if (typeof n.vectorPath === 'string' && n.vectorPath.length <= 20000 && /^[\s\dMmLlHhVvCcSsQqTtAaZzEe+.,-]*$/.test(n.vectorPath)) result.vectorPath = n.vectorPath;
   if (n.componentRole === 'master' || n.componentRole === 'instance') result.componentRole = n.componentRole;

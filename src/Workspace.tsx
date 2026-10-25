@@ -2,6 +2,7 @@ import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowDownToLine,ArrowRight,ArrowUpRight,Check,ChevronDown,Clock3,Copy,FilePlus2,Folder,FolderOpen,Grid2X2,HelpCircle,LayoutGrid,List,Maximize2,Minus,MoreHorizontal,Plus,Search,Sparkles,Star,Trash2,Undo2,Workflow,X} from 'lucide-react';
 import Editor from './App';
 import {BrandMark} from './Brand';
+import {loadProjectFonts} from './fonts';
 import {Modal,PageIcon,TemplateDialog} from './Dialogs';
 import {NodeTree} from './DesignView';
 import {resolvePage} from './model';
@@ -12,7 +13,7 @@ import type {AgentStatus} from './desktop';
 
 const labels:Record<string,string>={all:'모든 파일',desktop:'Windows',mobile:'Android',web:'웹 디자인',banner:'배너 · SNS',slide:'프레젠테이션'};
 function relativeTime(time:number){const d=Math.max(0,Date.now()-time);if(d<60_000)return '방금 전';if(d<3_600_000)return `${Math.floor(d/60_000)}분 전`;if(d<86_400_000)return `${Math.floor(d/3_600_000)}시간 전`;return new Intl.DateTimeFormat('ko-KR',{month:'short',day:'numeric'}).format(time);}
-function WindowBar(){return <header className="workspace-titlebar"><span className="wordmark"><BrandMark/><span className="velora-wordmark">Velora</span><small>0.4.1</small></span><span className="titlebar-caption">A quieter place to create.</span><div className="window-actions">{window.desktop&&<><button aria-label="최소화" onClick={()=>window.desktop?.minimize()}><Minus size={14}/></button><button aria-label="최대화" onClick={()=>window.desktop?.maximize()}><Maximize2 size={12}/></button><button className="window-close" aria-label="앱 닫기" onClick={()=>window.desktop?.close()}><X size={17}/></button></>}</div></header>;}
+function WindowBar(){return <header className="workspace-titlebar"><span className="wordmark"><BrandMark/><span className="velora-wordmark">Velora</span><small>0.5.0</small></span><span className="titlebar-caption">A quieter place to create.</span><div className="window-actions">{window.desktop&&<><button aria-label="최소화" onClick={()=>window.desktop?.minimize()}><Minus size={14}/></button><button aria-label="최대화" onClick={()=>window.desktop?.maximize()}><Maximize2 size={12}/></button><button className="window-close" aria-label="앱 닫기" onClick={()=>window.desktop?.close()}><X size={17}/></button></>}</div></header>;}
 function ProjectCover({file}:{file:WorkspaceFile}){
   const container=useRef<HTMLDivElement>(null),[size,setSize]=useState({width:400,height:238});
   const source=file.project.pages.find(p=>p.id===file.project.activePageId)||file.project.pages[0];
@@ -29,6 +30,7 @@ export default function Workspace(){
   const[action,setAction]=useState<{kind:'mcp'|'help';sequence:number}|undefined>(),[editorVersion,setEditorVersion]=useState(0);
   const database=useRef<IDBDatabase|null>(null),filesRef=useRef(files),activeRef=useRef(activeId),pending=useRef(new Map<string,WorkspaceFile>()),saveTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined),toastTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined),search=useRef<HTMLInputElement>(null),importInput=useRef<HTMLInputElement>(null);
   filesRef.current=files;activeRef.current=activeId;
+  useEffect(()=>{void Promise.all(files.map(f=>loadProjectFonts(f.project.fonts))).catch(()=>{});},[files]);
   const notify=useCallback((message:string)=>{setToast(message);clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),3500);},[]);
   const flush=useCallback(async()=>{if(!database.current||!pending.current.size)return;const batch=[...pending.current.values()];pending.current.clear();try{await writeFiles(database.current,batch);setError('');if(!pending.current.size)setSaving(false);}catch(e){for(const entry of batch)if(!pending.current.has(entry.id))pending.current.set(entry.id,entry);setError('프로젝트를 보관하지 못했습니다. 저장 공간을 확인하고 파일로도 저장하세요.');setSaving(false);}},[]);
   const put=useCallback((file:WorkspaceFile)=>{
@@ -41,7 +43,7 @@ export default function Workspace(){
     try{db=await openWorkspace();if(canceled){db.close();return;}let stored=await readFiles(db);if(canceled){db.close();return;}if(!stored.length){stored=seedFiles();await writeFiles(db,stored);}
       const last=localStorage.getItem(LAST_PROJECT),current=localStorage.getItem(RECOVERY_PROJECT),lastFile=stored.find(f=>f.id===last&&!f.trashedAt);
       if(current){try{const recovery=JSON.parse(current),file=stored.find(f=>f.id===recovery.id&&!f.trashedAt),recovered=parseProject(JSON.stringify(recovery.project));if(file&&(recovered.revision||0)>(file.project.revision||0)){file.project=recovered;file.updatedAt=Date.now();await writeFiles(db,[file]);}}catch{/* Keep the stored project if recovery is invalid. */}}
-      if(canceled){db.close();return;}database.current=db;filesRef.current=stored;setFiles(stored);const selected=lastFile||stored.find(f=>!f.trashedAt)||stored[0];activeRef.current=selected.id;setActiveId(selected.id);localStorage.setItem(LAST_PROJECT,selected.id);localStorage.setItem(CURRENT_PROJECT,JSON.stringify(selected.project));setReady(true);
+      if(canceled){db.close();return;}database.current=db;filesRef.current=stored;setFiles(stored);const selected=lastFile||stored.find(f=>!f.trashedAt)||stored[0];activeRef.current=selected.id;setActiveId(selected.id);localStorage.setItem(LAST_PROJECT,selected.id);try{localStorage.setItem(CURRENT_PROJECT,JSON.stringify(selected.project));}catch{/* IndexedDB retains embedded fonts when the legacy cache is full. */}setReady(true);
     }catch(e){if(canceled)return;const fallback=seedFiles();filesRef.current=fallback;setFiles(fallback);activeRef.current=fallback[0].id;setActiveId(fallback[0].id);setError('작업 목록을 저장할 수 없습니다. 편집한 프로젝트를 파일로 저장하세요.');setReady(true);}
   })();return()=>{canceled=true;};},[]);
   useEffect(()=>{const save=()=>{const file=filesRef.current.find(f=>f.id===activeRef.current);if(file)try{localStorage.setItem(RECOVERY_PROJECT,JSON.stringify({id:file.id,project:file.project}));}catch{/* IndexedDB is the primary storage. */}void flush();};window.addEventListener('pagehide',save);window.addEventListener('beforeunload',save);return()=>{window.removeEventListener('pagehide',save);window.removeEventListener('beforeunload',save);};},[flush]);

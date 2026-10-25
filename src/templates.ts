@@ -2,6 +2,7 @@ import type { DesignNode, DesignPage, DesignProject, NodeType, PageKind } from '
 import { normalizeNode } from './model';
 import {validArtboardSize} from './artboard-size';
 import {extraTemplates} from './sample-templates';
+import {auroraBanner} from './creative';
 export { presets } from './presets';
 
 let sequence = 0;
@@ -243,6 +244,7 @@ export function createProject(): DesignProject {
 }
 
 export const templates: { id: string; name: string; description: string; kind: PageKind; create: () => DesignPage }[] = [
+  {id:'aurora-discord',name:'Aurora · 소프트 Discord 배너',description:'하늘·라일락 그라데이션, 캘리그래피와 곡선·점선 장식',kind:'banner',create:auroraBanner},
   ...extraTemplates,
   { id:'nook-windows',name:'Nook · Windows workspace',description:'그룹과 자동 레이아웃으로 구성한 데스크톱 앱',kind:'desktop',create:desktopDashboard },
   { id:'sage-android',name:'Sage · Android finance',description:'금융 홈 화면과 실제 편집 가능한 컨트롤',kind:'mobile',create:financeMobile },

@@ -4,24 +4,38 @@
 
 <p align="center"><a href="https://github.com/se01hxa/Velora/releases/latest">Windows 다운로드</a> · <a href="README.ko.md">사용 및 빌드 가이드</a> · <a href="docs/MCP.ko.md">MCP 연결</a></p>
 
-Velora는 Windows용 로컬 디자인 도구입니다. 프로젝트 홈에서 작업을 고르고, 중첩 레이어·자동 레이아웃·컴포넌트·프로토타입·키프레임으로 Windows, Android, 웹, 배너와 프레젠테이션을 디자인합니다. HTML/CSS, React, Android XML·Compose, Windows WPF 코드와 SVG·PNG·PPTX로 내보낼 수 있습니다.
+Velora는 Windows용 로컬 디자인 도구입니다. 프로젝트 홈에서 작업을 고르고, 중첩 레이어·자동 레이아웃·컴포넌트·프로토타입·키프레임으로 Windows, Android, 웹, 배너와 프레젠테이션을 디자인합니다. HTML/CSS, React, Android XML·Compose, Windows WPF 코드와 SVG·PNG·GIF·PPTX로 내보낼 수 있습니다.
+
+## 0.5 · 더 섬세한 디자인과 GIF
+
+- **배경과 장식:** 왼쪽 ✦ 버튼에서 12종 선형·방사형 배경과 8종 물결·점선 궤도·글로우·별·도트·리본 장식을 추가합니다. 배경은 별도 레이어이며 2~8개 색상 포인트, 위치와 각도를 편집할 수 있습니다.
+- **자세한 도구:** 곡선의 시작점·조절점·끝점, 점선 길이·간격·선 끝 모양, 글자 기울임·밑줄·취소선을 편집합니다.
+- **TTF 폰트:** 왼쪽 T 버튼 또는 타이포그래피의 **TTF 폰트 가져오기**에서 파일을 선택합니다. 폰트는 프로젝트에 저장됩니다. HTML·React에는 폰트 데이터를 포함하고 PNG·GIF·SVG에는 글자 경로를 담아 형태를 보존합니다.
+- **GIF:** 왼쪽 **GIF** 또는 **내보내기 → GIF 애니메이션**에서 출력 너비·길이·FPS·반복을 설정하고 미리보기 후 저장합니다. 모션 프리셋과 사용자 키프레임을 렌더링하며 만들기 중지도 지원합니다.
+- **Aurora 배너:** 새 디자인에서 **Aurora · 소프트 Discord 배너**를 선택하세요. 하늘·라일락 배경, 캘리그래피, 가는 곡선과 작은 장식을 개별 편집할 수 있습니다. 총 24개 디자인 예시를 제공합니다.
+
+![Aurora 배너 예시](assets/aurora-banner.png)
+
+[실제 GIF 예시 다운로드](https://github.com/se01hxa/Velora/releases/download/v0.5.0/Velora-Aurora-demo.gif)
+
+![GIF 만들기와 미리보기](assets/gif-export.png)
 
 ![Velora project workspace](assets/home.png)
 
 ## Windows 설치
 
-[최신 릴리스](https://github.com/se01hxa/Velora/releases/latest)에서 **Velora-Setup-0.4.1.exe**를 다운로드해 실행합니다. 설치를 마치면 바탕화면과 시작 메뉴의 **Velora**로 엽니다. 설치 파일은 Windows x64용이며 상용 코드 서명은 포함하지 않습니다.
+[최신 릴리스](https://github.com/se01hxa/Velora/releases/latest)에서 **Velora-Setup-0.5.0.exe**를 다운로드해 실행합니다. 설치를 마치면 바탕화면과 시작 메뉴의 **Velora**로 엽니다. 설치 파일은 Windows x64용이며 상용 코드 서명은 포함하지 않습니다.
 
-- `Velora-Setup-0.4.1.exe`: Windows 설치 파일
+- `Velora-Setup-0.5.0.exe`: Windows 설치 파일
 - `Velora-source.zip`: 전체 소스와 테스트, 빌드 안내
 - `Velora-Brand.zip`: 직접 제작한 V 로고의 SVG·PNG·Windows ICO
 - `SHA256SUMS.txt`: 배포 파일 확인용 해시
 
 ## 작업 공간과 편집
 
-**0.4.1**: 새 디자인·새 아트보드 창 상단의 **자유 사이즈**에서 작업 종류, 이름, 너비와 높이를 직접 입력합니다. 1~16,384px와 소수 크기를 지원하고 ↔ 버튼으로 가로·세로를 바꿀 수 있습니다. 편집 중에는 선택을 해제한 뒤 오른쪽 **아트보드 → 자유 사이즈 → 크기 적용**에서 변경합니다. 크기 변경은 실행 취소할 수 있으며 저장·재열기와 코드 내보내기에도 유지됩니다.
+새 디자인·새 아트보드 창 상단의 **자유 사이즈**에서 작업 종류, 이름, 너비와 높이를 직접 입력합니다. 1~16,384px와 소수 크기를 지원하고 ↔ 버튼으로 가로·세로를 바꿀 수 있습니다. 편집 중에는 선택을 해제한 뒤 오른쪽 **아트보드 → 자유 사이즈 → 크기 적용**에서 변경합니다. 크기 변경은 실행 취소할 수 있으며 저장·재열기와 코드 내보내기에도 유지됩니다.
 
-디자인 예시는 **11개에서 23개**로 늘었습니다. Windows 작업 보드·음악 앱, Android 여행·상품 상세, 포트폴리오·분석 대시보드, 정사각형 포스터·스토리·와이드 배너, 제품 소개·성과·로드맵 슬라이드를 추가했습니다. 템플릿 갤러리에서 골라 별도 프로젝트나 현재 문서의 아트보드로 만들 수 있습니다. 모든 예시는 편집 가능한 텍스트·도형으로 구성했으며 기존 프로젝트를 덮어쓰지 않습니다.
+디자인 예시는 **24개**입니다. Windows 작업 보드·음악 앱, Android 여행·상품 상세, 포트폴리오·분석 대시보드, 정사각형 포스터·스토리·와이드·Discord 배너, 제품 소개·성과·로드맵 슬라이드를 제공합니다. 템플릿 갤러리에서 골라 별도 프로젝트나 현재 문서의 아트보드로 만들 수 있습니다. 모든 예시는 편집 가능한 텍스트·도형으로 구성했으며 기존 프로젝트를 덮어쓰지 않습니다.
 
 ![자유 사이즈와 23개 디자인 예시](assets/custom-size-gallery.png)
 

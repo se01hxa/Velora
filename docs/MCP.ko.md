@@ -29,6 +29,8 @@ Windows 경로의 역슬래시는 JSON과 TOML의 큰따옴표 문자열에서 �
 
 ## 제공 도구
 
+0.5의 `luma_batch_edit`는 `fillType: "radial"`, 최대 8개의 `gradient.stops` (`color`, 0~1 `position`), `strokeDash`, `strokeCap`, `fontStyle`, `textDecoration`을 지원합니다. `luma_create_page`의 `presetId: "aurora-discord"`로 편집 가능한 소프트 배너를 만듭니다. TTF 파일 가져오기와 GIF 생성·저장은 앱에서 실행합니다. 문서에 저장된 폰트는 PNG 렌더링과 SVG·웹 코드 생성에도 적용됩니다.
+
 - `luma_get_document`: 문서 요약 또는 전체 데이터와 현재 revision을 읽습니다.
 - `luma_get_nodes`: 아트보드의 요소를 읽거나 ID로 필터링합니다.
 - `luma_list_templates`: 템플릿과 화면 크기 프리셋을 확인합니다.
