@@ -262,7 +262,7 @@ function composeExport(project: DesignProject, page: DesignPage): ExportFile[] {
 
 function svgExport(project: DesignProject, page: DesignPage): ExportFile[] {
   const nodes=visible(page);const {w,h}=pageSize(page);const defs:string[]=[];const byId=new Map(nodes.map(n=>[n.id,n]));
-  for(const n of nodes){if(n.clipContent)defs.push(`<clipPath id="${n.key}_parent_clip" clipPathUnits="userSpaceOnUse"><g transform="translate(${num(n.x)} ${num(n.y)}) rotate(${num(n.rotation)} ${num(n.width/2)} ${num(n.height/2)})">${svgGeometry(n)}</g></clipPath>`);}
+  for(const n of nodes){if(n.clipContent)defs.push(`<clipPath id="${n.key}_parent_clip" clipPathUnits="userSpaceOnUse" transform="translate(${num(n.x)} ${num(n.y)}) rotate(${num(n.rotation)} ${num(n.width/2)} ${num(n.height/2)})">${svgGeometry(n)}</clipPath>`);}
   const shapes=nodes.map(n=>{
     const cx=n.width/2,cy=n.height/2;let fill=cssColor(n.fill);let filter='';
     if(n.fillType==='linear'&&n.gradient){const rad=finite(n.gradient.angle,90)*Math.PI/180,dx=Math.sin(rad)/2,dy=-Math.cos(rad)/2;defs.push(`<linearGradient id="${n.key}_gradient" x1="${num(.5-dx)}" y1="${num(.5-dy)}" x2="${num(.5+dx)}" y2="${num(.5+dy)}"><stop offset="0" stop-color="${cssColor(n.gradient.from)}" /><stop offset="1" stop-color="${cssColor(n.gradient.to)}" /></linearGradient>`);fill=`url(#${n.key}_gradient)`;}

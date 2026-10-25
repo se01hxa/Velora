@@ -1,3 +1,4 @@
+import {validArtboardSize} from './artboard-size';
 import type { DesignNode, DesignPage, DesignProject, DesignOperation, NodeType, NodeKeyframe } from './types';
 
 const TYPES: NodeType[] = ['frame', 'text', 'button', 'ellipse', 'image', 'group', 'line', 'polygon', 'vector'];
@@ -400,7 +401,7 @@ export function applyOperations(project: DesignProject, pageId: string, operatio
         page.nodes.push(...copies); selectionIds = [map.get(master.id)!]; addCreated(copies); break;
       }
       case 'resize_page': {
-        if (!Number.isFinite(op.width) || !Number.isFinite(op.height) || op.width < 100 || op.width > 16384 || op.height < 100 || op.height > 16384) throw new Error('아트보드 크기는 100~16384입니다.');
+        if (!validArtboardSize(op.width,op.height)) throw new Error('아트보드 크기는 1~16,384px입니다.');
         resizeChildren(page, undefined, page.width, page.height, op.width, op.height); page.width = op.width; page.height = op.height; break;
       }
       case 'token_update': {

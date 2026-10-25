@@ -110,7 +110,7 @@ describe('version 2 project import', () => {
     const legacy = parseProject(JSON.stringify(rawProject({ version: 1, pages: [page] })));
     expect(legacy.pages[0]).toMatchObject({ width: 4096, height: 4096 });
     expect(legacy.pages[0].nodes[0]).toMatchObject({ width: 4096, height: 4096, x: -4096, y: 8192, fontSize: 300, radius: 2048, blur: 60, strokeWidth: 100 });
-    expect(parseProject(JSON.stringify(rawProject({ version: 2, pages: [{ ...page, width: 1e6, height: -1, nodes: [] }] })))).toMatchObject({ pages: [{ width: 16384, height: 100 }] });
+    expect(parseProject(JSON.stringify(rawProject({ version: 2, pages: [{ ...page, width: 1e6, height: -1, nodes: [] }] })))).toMatchObject({ pages: [{ width: 16384, height: 1 }] });
   });
 
   it('preserves all supported rich fields and document metadata on a second import', () => {

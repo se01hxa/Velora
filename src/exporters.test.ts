@@ -11,6 +11,14 @@ function file(files: ExportFile[], name: string): string { const result = files.
 function output(format: ExportFormat, overrides: Partial<DesignNode> = {}): ExportFile[] { const { project, page } = fixture(overrides); return exportDesign(project, page, format); }
 
 describe('code export contracts', () => {
+  it('uses directly transformable clip geometry so clipped children remain visible in SVG and PNG',()=>{
+    const {page,project}=fixture();project.version=2;
+    page.nodes=[{...baseNode,id:'parent',type:'frame',x:24,y:318,width:364,height:303,rotation:8,clipContent:true},{...baseNode,id:'child',parentId:'parent',x:10,y:20,width:80,height:90}];
+    const svg=file(exportDesign(project,page,'svg'),'design.svg');
+    expect(svg).toMatch(/<clipPath[^>]*_parent_clip[^>]*clipPathUnits="userSpaceOnUse" transform="translate\(/);
+    expect(svg).not.toMatch(/<clipPath[^>]*>\s*<g/);
+    expect(svg).toContain('clip-path="url(#');
+  });
   it('emits usable entry files and platform notes for every supported format', () => {
     const entries: [ExportFormat, string][] = [['html', 'index.html'], ['react', 'Screen.jsx'], ['xml', 'res/layout/screen.xml'], ['compose', 'Screen.kt'], ['svg', 'design.svg'], ['json', 'project.luma.json']];
     for (const [format, entry] of entries) {

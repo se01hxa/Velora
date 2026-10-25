@@ -1,5 +1,7 @@
 import type { DesignNode, DesignPage, DesignProject, NodeType, PageKind } from './types';
 import { normalizeNode } from './model';
+import {validArtboardSize} from './artboard-size';
+import {extraTemplates} from './sample-templates';
 export { presets } from './presets';
 
 let sequence = 0;
@@ -225,10 +227,12 @@ function musicMobile(): DesignPage {
   ]);
 }
 
-export function createPage(kind: PageKind): DesignPage {
+export function createPage(kind: PageKind, options: {name?:string;width?:number;height?:number;background?:string} = {}): DesignPage {
   const sizes:Record<PageKind,[number,number,string]>={mobile:[412,915,'새 Android 화면'],web:[1440,900,'새 웹 화면'],desktop:[1440,900,'새 Windows 화면'],banner:[1200,628,'새 배너'],slide:[1280,720,'새 프레젠테이션']};
   const [width,height,name]=sizes[kind];
-  return page(name,kind,width,height,'#FFFFFF',[]);
+  const w=options.width??width,h=options.height??height;
+  if(!validArtboardSize(w,h))throw new Error('아트보드 크기는 1~16,384px입니다.');
+  return page(options.name?.trim()||name,kind,w,h,options.background||'#FFFFFF',[]);
 }
 
 export function createProject(): DesignProject {
@@ -239,6 +243,7 @@ export function createProject(): DesignProject {
 }
 
 export const templates: { id: string; name: string; description: string; kind: PageKind; create: () => DesignPage }[] = [
+  ...extraTemplates,
   { id:'nook-windows',name:'Nook · Windows workspace',description:'그룹과 자동 레이아웃으로 구성한 데스크톱 앱',kind:'desktop',create:desktopDashboard },
   { id:'sage-android',name:'Sage · Android finance',description:'금융 홈 화면과 실제 편집 가능한 컨트롤',kind:'mobile',create:financeMobile },
   { id:'form-campaign',name:'Form / Future · Campaign',description:'대담한 타이포그래피와 그라디언트 캠페인',kind:'banner',create:brandBanner },

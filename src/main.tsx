@@ -3,4 +3,5 @@ import ReactDOM from 'react-dom/client';
 import App from './Workspace';
 import './styles.css';
 import './obsidian.css';
+import './size-controls.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);

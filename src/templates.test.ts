@@ -2,8 +2,17 @@ import {describe,it,expect} from 'vitest';
 import {createPage,createProject,makeNode,templates,presets} from './templates';
 import {flattenPage,resolvePage} from './model';
 import type {PageKind} from './types';
+import {extraTemplates} from './sample-templates';
+import {parseProject} from './validation';
+import {projectForPage} from './workspace-store';
+import {exportDesign} from './exporters';
 
 describe('editable starter content and presets',()=>{
+  it('offers 23 unique templates with new editable examples for all five platforms',()=>{
+    expect(templates).toHaveLength(23);expect(new Set(templates.map(t=>t.id)).size).toBe(23);
+    for(const kind of ['desktop','mobile','web','banner','slide'])expect(extraTemplates.filter(t=>t.kind===kind).length).toBeGreaterThanOrEqual(2);
+    for(const t of extraTemplates){const p=t.create(),project=projectForPage(p),restored=parseProject(JSON.stringify(project));expect(restored.pages[0].nodes.length).toBe(p.nodes.length);expect(flattenPage(p).nodes.length).toBeGreaterThan(5);expect(p.nodes.some(n=>n.type==='text')).toBe(true);expect(p.nodes.every(n=>n.type!=='image')).toBe(true);expect(exportDesign(project,p,'svg')[0].content).toContain('<svg');}
+  });
   it('creates blank pages for all five artifact kinds',()=>{
     for(const kind of ['desktop','mobile','web','banner','slide'] as PageKind[]){const p=createPage(kind);expect(p.kind).toBe(kind);expect(p.nodes).toHaveLength(0);expect(p.width).toBeGreaterThan(300);expect(p.height).toBeGreaterThan(300);}
   });

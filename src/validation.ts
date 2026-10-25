@@ -192,7 +192,7 @@ export function parseProject(raw: string): DesignProject {
     const result: DesignPage = {
       id: pageIds[pageIndex], name: str(page.name, 'Untitled', 200),
       kind: choice(page.kind, ['mobile', 'web', 'slide', 'desktop', 'banner'], 'web'),
-      width: finite(page.width, 100, bounds.size, 390), height: finite(page.height, 100, bounds.size, 844),
+      width: finite(page.width, source.version === 2 ? 1 : 100, bounds.size, 390), height: finite(page.height, source.version === 2 ? 1 : 100, bounds.size, 844),
       background: color(page.background, '#ffffff'), nodes,
     };
     if (record(page.grid)) result.grid = { visible: page.grid.visible === true, size: finite(page.grid.size, 1, 512, 8), snap: page.grid.snap === true };
