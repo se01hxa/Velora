@@ -15,7 +15,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo 'b5c8ca6df2eb289eb82b271eff3d597c1569ba86eeeda54212f762d9ecaa50e3  Velora-source.zip' | sha256sum -c -
+          echo 'f1394abf491d79422e9cf414f6fcc2e222f70b3a0f729987d1b910cebaf44807  Velora-source.zip' | sha256sum -c -
           unzip -q Velora-source.zip -d "$RUNNER_TEMP/velora-source"
           cp -a "$RUNNER_TEMP/velora-source/Velora/." .
           git config user.name 'github-actions[bot]'
